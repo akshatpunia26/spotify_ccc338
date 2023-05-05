@@ -6,7 +6,7 @@ from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 client_id = 'dc8611201d2a4d68ac59e3623d309096'
 client_secret = '470122036a274706a4f705ab88867fed'
 scope = 'user-library-read'
-redirect_uri = 'https://accounts.spotify.com/authorize'
+redirect_uri = 'https://modern-love-spotify.streamlit.app/'
 auth_manager = SpotifyOAuth(client_id=client_id, client_secret=client_secret, scope=scope, redirect_uri=redirect_uri)
 sp = spotipy.Spotify(auth_manager=auth_manager)
 
