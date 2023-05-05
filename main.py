@@ -14,12 +14,6 @@ st.markdown('[Akshat Punia](https://akshatpunia.com/)')
 
 auth_manager = SpotifyOAuth(client_id=client_id, client_secret=client_secret, scope=scope, redirect_uri=redirect_uri)
 
-try:
-    sp = spotipy.Spotify(auth_manager=auth_manager)
-    st.write('Authentication successful!')
-except:
-    st.write('Authentication failed. Please try again later.')
-
 decades = {'1920s': 'https://open.spotify.com/playlist/7HWmbcjkVTfQdLKk2NWmtZ?si=6b870f33efe24872' ,
            '1930s': 'https://open.spotify.com/playlist/2webFRRyZuTUdw9KrMKT63?si=08ee3c375cba4319' ,
            '1940s': 'https://open.spotify.com/playlist/1KTSHAsbCgSnZLMdXp52Ln?si=93366e637d9349ca' ,
@@ -28,6 +22,11 @@ decades = {'1920s': 'https://open.spotify.com/playlist/7HWmbcjkVTfQdLKk2NWmtZ?si
 decade = st.slider('Select a decade', 1920, 2010, 1980, 10)
 
 if st.button('Generate Playlist'):
+    try:
+        sp = spotipy.Spotify(auth_manager=auth_manager)
+        st.write('Authentication successful!')
+    except:
+        st.write('Authentication failed. Please try again later.')
     decade_str = str(decade) + 's'
     if decade_str in decades:
         playlist_uri = decades[decade_str]
