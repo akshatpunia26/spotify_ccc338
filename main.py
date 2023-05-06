@@ -4,9 +4,21 @@ import random
 import requests
 import base64
 st.set_page_config(layout='wide', page_title='Modern Love: In Writing', page_icon=':heart:')
+
+st.title("Modern Love: Writing and Deconstructing the Idea")
+st.markdown("[CCC338 - Creative Project from Akshat Punia](https://akshatpunia.com/)")
+
+st.header("Introduction")
+st.write("I was always intrigued by how the idea of modern love has been displayed through pop art throughout the decades. By listening to these songs around the idea of love from various genres and time periods, we can gain a better understanding of this idea of modern love has evolved and continues to evolve.")
+
+st.header("The Evolution of Love in Pop Art")
+st.write("From the crooners of the 1930s to the rock ballads of the 1980s and beyond, love songs have always been a staple of pop culture. The lyrics and melodies have evolved with each decade, giving us a glimpse into the larger trends of the time.")    
+st.write("For example, in the 1930s and 1940s, love songs were often about longing and unrequited love. With the rise of the rock and roll in the 1950s and 1960s, love songs became more upbeat and focused on the excitement and passion of falling in love. In the 1970s and 1980s, love songs took a turn towards heartbreak and loss, with artists exploring the pain of failed relationships and unrequited love.")
+st.write("Despite these changes, the underlying theme of love has remained a constant throughout pop art. By analyzing the love songs of each decade, we can gain a better understanding of how love has been perceived and experienced by society.")
+
+st.write("To further explore the idea of modern love, I (unsucessfully to my original idea) created this webapp. By selecting two decades, the generator will create a playlist of 20 random songs (10 from each decade). This playlist can be used to explore the themes and trends of love throughout the decades.")
+
 playlist_data = pd.read_csv('playlist_data.csv')
-st.markdown('## Love and Pop Culture Through the Decades')
-st.write('Love has been a central theme in pop culture for decades. From the romantic ballads of the 1920s to the heartbreak anthems of the 2020s, music has reflected and influenced the way we think about love and relationships. In this playlist generator, we explore how love has evolved over time through the lens of popular music.')
 client_id = 'dc8611201d2a4d68ac59e3623d309096'
 client_secret = '470122036a274706a4f705ab88867fed'
 credentials = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
