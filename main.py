@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 import random
+import requests
+import base64
 
 # Load playlist data
 playlist_data = pd.read_csv('playlist_data.csv')
@@ -8,13 +10,24 @@ playlist_data = pd.read_csv('playlist_data.csv')
 # Set page title
 st.set_page_config(page_title='Modern Love: In Writing', page_icon=':heart:')
 
-# Page heading and synopsis
-st.title('Modern Love: In Writing')
-st.markdown('''
-The idea of modern love has evolved over the years, and popular music has played a significant role in shaping our understanding of what love means in different eras. From the romantic ballads of the 1950s to the more complex and nuanced portrayals of love in recent times, pop songs have reflected changing social norms, cultural attitudes, and personal experiences.
+# Spotify API credentials
+client_id = 'dc8611201d2a4d68ac59e3623d309096'
+client_secret = '470122036a274706a4f705ab88867fed'
 
-With this tool, you can explore the evolution of modern love by generating a playlist of the top 10 pop songs from two different decades. Simply select your preferred decades from the dropdown menus and click the "Generate Playlist" button to get started!
-''')
+# Base64 encode credentials
+credentials = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+
+# Set headers
+headers = {
+    'Authorization': f"Basic {credentials}"
+}
+
+# Get access token
+token_url = 'https://accounts.spotify.com/api/token'
+response = requests.post(token_url, 
+                         data={'grant_type': 'client_credentials'},
+                         headers=headers)
+access_token = response.json()['access_token']
 
 # Decades selector
 decades_dict = {'1920s': 1920,
@@ -44,9 +57,19 @@ if st.button('Generate Playlist'):
     playlist2 = playlist2.sample(n=min(10, len(playlist2)))
     playlist = pd.concat([playlist1, playlist2]).reset_index(drop=True)
     st.markdown(f"## Your {decade1} + {decade2} Playlist")
-    st.write("Here are your selected songs:")
     for index, row in playlist.iterrows():
-        st.write(f"### {index + 1}. {row['name']} by {row['artist']} ({row['decade']})")
-        #st.image(row['image_url'])
-        st.write(f"Listen on [Spotify]({row['playlist_uri']})")
-        st.write('\n')  
+        # Get album art image from Spotify API
+        search_url = 'https://api.spotify.com/v1/search'
+        query = f"{row['name']} {row['artist']}"
+        response = requests.get(search_url, 
+                                params={'q': query, 'type': 'track'}, 
+                                headers={'Authorization': f'Bearer {access_token}'})
+        track_id = response.json()['tracks']['items'][0]['id']
+        track_url = f'https://api.spotify.com/v1/tracks/{track_id}'
+        response = requests.get(track_url, headers={'Authorization': f'Bearer {access_token}'})
+        image_url = response.json()['album']['images'][0]['url']
+        
+        # Display song info and album art
+        st.write(f"**{row['name']}** by {row['artist']} ({row['decade']}s)")
+        st.image(image_url, width=200)
+        st.write(f"Listen on [Spotify]({row['spotify_uri']})\n")
