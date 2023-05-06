@@ -47,10 +47,14 @@ if not access_token:
     response = st.experimental_get_query_params()
     if 'code' in response:
         auth_code = response['code'][0]
-        token_info = auth_manager.get_access_token(auth_code)
-        access_token = token_info['access_token']
+        try:
+            token_info = auth_manager.get_access_token(auth_code)
+            access_token = token_info['access_token']
+        except:
+            pass
     else:
         st.stop()
+
 
 spotify = spotipy.Spotify(auth=access_token)
 
