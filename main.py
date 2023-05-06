@@ -72,4 +72,4 @@ if st.button('Generate Playlist'):
         # Display song info and album art
         st.write(f"**{row['name']}** by {row['artist']} ({row['decade']}s)")
         st.image(image_url, width=200)
-        st.write(f"Listen on [Spotify]({row['spotify_uri']})\n")
+        st.write(f"Listen on [Spotify]({row['playlist_uri']})\n")
