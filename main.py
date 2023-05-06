@@ -23,7 +23,10 @@ auth_manager = SpotifyOAuth(
     cache_path='.spotipyoauthcache'
 )
 
+playlist_name = None
+description = None
 access_token = None
+
 try:
     token_info = auth_manager.get_cached_token()
     if token_info:
@@ -32,13 +35,9 @@ except:
     pass
 
 if not access_token:
-    playlist_name = ""
-    description = ""
-    decade1 = ""
-    decade2 = ""
-
     playlist_name = st.text_input("Enter a name for the playlist:")
     description = st.text_input("Enter a description for the playlist:")
+
     decade1 = st.selectbox("Select the first decade:", options=list(DECADES.keys()))
     decade2 = st.selectbox("Select the second decade:", options=list(DECADES.keys()))
 
@@ -47,20 +46,15 @@ if not access_token:
     response = st.experimental_get_query_params()
     if 'code' in response:
         auth_code = response['code'][0]
-        try:
-            token_info = auth_manager.get_access_token(auth_code)
-            access_token = token_info['access_token']
-        except:
-            pass
+        token_info = auth_manager.get_access_token(auth_code)
+        access_token = token_info['access_token']
     else:
         st.stop()
 
-
-spotify = spotipy.Spotify(auth=access_token)
-
-user_dict = spotify.current_user()
-
 if playlist_name and description and access_token:
+    spotify = spotipy.Spotify(auth=access_token)
+    user_dict = spotify.current_user()
+
     playlist = spotify.user_playlist_create(user_dict['id'], name=playlist_name, public=False, description=description)
 
     track_uris = []
