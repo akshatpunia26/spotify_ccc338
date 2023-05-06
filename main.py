@@ -36,8 +36,8 @@ start_year2 = int(decades_dict[decade2])
 end_year2 = int(start_year2) + 9
 
 if st.button('Generate Playlist'):
-    playlist1 = playlist_data[(playlist_data['decade'] == decade1) & (playlist_data['decade'] >= start_year1) & (playlist_data['decade'] <= end_year1)].sample(20)
-    playlist2 = playlist_data[(playlist_data['decade'] == decade2) & (playlist_data['decade'] >= start_year2) & (playlist_data['decade'] <= end_year2)].sample(20)
+    playlist1 = playlist_data[(playlist_data['decade'] == decade1) & (playlist_data['year'] >= start_year1) & (playlist_data['year'] <= end_year1)].sample(20)
+    playlist2 = playlist_data[(playlist_data['decade'] == decade2) & (playlist_data['year'] >= start_year2) & (playlist_data['year'] <= end_year2)].sample(20)
     playlist = pd.concat([playlist1, playlist2]).sample(frac=1)
     playlist_name = f"{decade1} + {decade2} Playlist"
     playlist_description = f"Top 20 songs from {decade1} and {decade2}"
