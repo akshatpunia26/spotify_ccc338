@@ -2,54 +2,51 @@ import streamlit as st
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-# Spotify credentials
-CLIENT_ID = "YOUR_CLIENT_ID"
-CLIENT_SECRET = "YOUR_CLIENT_SECRET"
-REDIRECT_URI = "http://localhost:3000"
+# Spotify API credentials
+CLIENT_ID = "dc8611201d2a4d68ac59e3623d309096"
+CLIENT_SECRET = "470122036a274706a4f705ab88867fed"
+REDIRECT_URI = "https://modern-love-spotify.streamlit.app/"
+
+# Spotify scope
 SCOPE = "playlist-modify-private"
 
-# Spotify authentication
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
-                                               client_secret=CLIENT_SECRET,
-                                               redirect_uri=REDIRECT_URI,
-                                               scope=SCOPE))
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=SCOPE, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, redirect_uri=REDIRECT_URI))
 
-# Decades dictionary
-DECADES = {'60s': 'year:1960-1969',
-           '70s': 'year:1970-1979',
-           '80s': 'year:1980-1989',
-           '90s': 'year:1990-1999',
-           '00s': 'year:2000-2009',
-           '10s': 'year:2010-2019',
-           '20s': 'year:2020-2023'}
-
-# Streamlit app
-def app():
-    st.set_page_config(page_title="Spotify Playlist Generator")
-    st.title("Spotify Playlist Generator")
-
-    # User inputs
-    playlist_name = st.text_input("Enter a name for your playlist:")
-    playlist_description = st.text_input("Enter a description for your playlist (optional):")
-    decade = st.selectbox("Select a decade:", list(DECADES.keys()))
-    
-    if playlist_name and decade:
-        year_range = DECADES[decade]
-        st.write("Fetching songs from the " + decade + "...")
+def get_track_ids_from_decades(decades):
+    track_ids = []
+    for decade in decades:
+        year_range = f"{decade}-01-01:{decade+9}-12-31"
         results = sp.search(q=year_range, type='track', limit=50)
-        tracks = results['tracks']['items']
-        st.write("Songs fetched!")
-        
-        # Playlist creation
-        user_dict = sp.me()
-        playlist = sp.user_playlist_create(user_dict['id'], name=playlist_name, public=False, description=playlist_description)
-        st.write(f"Playlist '{playlist_name}' created successfully!")
-        
-        # Adding tracks to playlist
-        track_uris = [track['uri'] for track in tracks]
-        sp.playlist_add_items(playlist['id'], track_uris)
-        st.write(f"{len(tracks)} songs added to the playlist!")
-        
-# Run the app
-if __name__ == '__main__':
+        for track in results['tracks']['items']:
+            track_ids.append(track['id'])
+    return track_ids
+
+def create_playlist(name, description, track_ids):
+    user_dict = sp.current_user()
+    playlist = sp.user_playlist_create(user_dict['id'], name=name, public=False, description=description)
+    sp.playlist_add_items(playlist['id'], track_ids)
+    st.success("Playlist created successfully!")
+
+def app():
+    st.header("Create a Spotify Playlist")
+
+    # Input playlist name
+    playlist_name = st.text_input("Enter playlist name")
+
+    # Input playlist description
+    description = st.text_input("Enter playlist description")
+
+    # Input decades
+    decades = st.multiselect("Select decades", [i for i in range(1920, 2020, 10)])
+
+    # Display playlist name and description
+    if playlist_name and description and decades:
+        track_ids = get_track_ids_from_decades(decades)
+        create_playlist(playlist_name, description, track_ids)
+    elif decades:
+        st.warning("Please enter a playlist name and description")
+    elif playlist_name or description:
+        st.warning("Please select at least one decade")
+
+if __name__ == "__main__":
     app()
