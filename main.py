@@ -10,17 +10,17 @@ st.title("Modern Love: Writing and Deconstructing the Idea")
 st.subheader("CCC338 - Creative Project - [Akshat Punia](https://akshatpunia.com/)")
 
 st.header("Introduction")
-st.write("I was always intrigued by how the idea of modern love has been displayed through pop art throughout the decades. By listening to these songs around the idea of love from various genres and time periods, we can gain a better understanding of this idea of modern love has evolved and continues to evolve.")
+st.write("I was always intrigued by how the idea of modern love has been displayed by the medium of pop art throughout the decades. By listening to these songs around from various genres and time periods, we can gain a better understanding of this idea of modern love and how it has evolved and continues to evolve.")
 
 image = 'elvis.png'
 st.image(image, caption='Elvis Presley Performing')
 
 st.header("The Evolution of Love in Pop Art")
 st.write("From the crooners of the 1930s to the rock ballads of the 1980s and beyond, love songs have always been a staple of pop culture. The lyrics and melodies have evolved with each decade, giving us a glimpse into the larger trends of the time.")    
-st.write("For example, in the 1930s and 1940s, love songs were often about longing and unrequited love. With the rise of the rock and roll in the 1950s and 1960s, love songs became more upbeat and focused on the excitement and passion of falling in love. In the 1970s and 1980s, love songs took a turn towards heartbreak and loss, with artists exploring the pain of failed relationships and unrequited love.")
-st.write("Despite these changes, the underlying theme of love has remained a constant throughout pop art. By analyzing the love songs of each decade, we can gain a better understanding of how love has been perceived and experienced by society.")
+st.write("For example, in the 1930s and 1940s, love songs were often about longing and unrequited love. With the rise of the rock and roll in the 1950s and 1960s, love songs became more upbeat and focused on the excitement and passion of falling in love. In the 1970s and 1980s, love songs took a turn towards heartbreak and loss, with artists exploring the pain of failed relationships.")
+st.write("Despite these changes, the underlying theme of love has remained a constant throughout pop art. By listening to these songs from each decade, we can gain a better understanding of how the idea has been perceived and experienced by society.")
 
-st.write("To further explore the idea of modern love, I (unsucessfully to my original idea) created this webapp. By selecting two decades, the generator will create a playlist of 20 random songs (10 from each decade). This playlist can be used to explore the themes and trends of love throughout the decades.")
+st.write("To further explore the idea of modern love, I (unsucessfully to what I originally wanted) created this webapp. By selecting the two decades, the generator will create a playlist of 20 songs (10 from each decade). This list can be used to explore the themes and trends of love throughout the decades.")
 
 playlist_data = pd.read_csv('playlist_data.csv')
 client_id = 'dc8611201d2a4d68ac59e3623d309096'
@@ -79,4 +79,3 @@ if st.button('Generate Playlist'):
             st.image(row['image_url'], width=200)
         with col2:
             st.markdown(f"## **{row['name']}** by {row['artist']} ({row['decade']})\n{row['spotify_link']}")
-
