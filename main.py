@@ -1,75 +1,68 @@
+import pandas as pd
 import streamlit as st
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
-# Define the available decades
-DECADES = {
-    "1920s": "1920-1929",
-    "1930s": "1930-1939",
-    "1940s": "1940-1949",
-    "1950s": "1950-1959",
-    "1960s": "1960-1969",
-    "1970s": "1970-1979",
-    "1980s": "1980-1989",
-    "1990s": "1990-1999",
-    "2000s": "2000-2009",
-    "2010s": "2010-2019",
-}
+# Spotify API credentials
+CLIENT_ID = 'dc8611201d2a4d68ac59e3623d309096'
+CLIENT_SECRET = '470122036a274706a4f705ab88867fed'
+REDIRECT_URI = 'https://modern-love-spotify.streamlit.app/'
 
-# Set up authentication manager
-auth_manager = SpotifyOAuth(
-    client_id='dc8611201d2a4d68ac59e3623d309096',
-    client_secret='470122036a274706a4f705ab88867fed',
-    redirect_uri='https://modern-love-spotify.streamlit.app/',
-    scope='playlist-modify-private,playlist-modify-public',
-    cache_path='.spotipyoauthcache'
-)
+# Create a Spotify client
+client_credentials_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-# Get access token
-access_token = None
-try:
-    token_info = auth_manager.get_cached_token()
-    if token_info:
-        access_token = token_info['access_token']
-except:
-    pass
+# Load the playlist data
+playlist_data = pd.read_csv('playlist_data.csv')
 
-if not access_token:
-    auth_url = auth_manager.get_authorize_url()
-    st.write('Please visit this URL to authorize the application:', auth_url)
-    response = st.experimental_get_query_params()
-    if 'code' in response:
-        auth_code = response['code'][0]
-        token_info = auth_manager.get_access_token(auth_code)
-        access_token = token_info['access_token']
-    else:
-        st.stop()
+# Set up the Streamlit app
+st.title('Decades Playlist Generator')
+st.markdown("""
+    Select two decades from 1920 to 2010, and we'll generate a playlist of the top 20 songs from each decade!
+""")
 
-# Use access token to get current user
-spotify = spotipy.Spotify(auth=access_token)
-user_dict = spotify.current_user()
+# Set up decade dictionary to handle decade ranges
+decades_dict = {'1920s': '1920',
+                '1930s': '1930',
+                '1940s': '1940',
+                '1950s': '1950',
+                '1960s': '1960',
+                '1970s': '1970',
+                '1980s': '1980',
+                '1990s': '1990',
+                '2000s': '2000',
+                '2010s': '2010'}
 
-# Get the two decades from the user
-decade1 = st.selectbox("Select the first decade:", options=list(DECADES.keys()))
-decade2 = st.selectbox("Select the second decade:", options=list(DECADES.keys()))
+# Create a list of decades
+decades = list(decades_dict.keys())
 
-# Initialize an empty list to hold the track URIs
-track_uris = []
+# Get user input for the decades
+decade1 = st.selectbox('Select the first decade:', decades)
+decade2 = st.selectbox('Select the second decade:', decades)
 
-# Search for tracks from the selected decades and add them to the list
-for decade in [decade1, decade2]:
-    st.write(f"Searching for {decade} songs...")
-    results = spotify.search(q=f"year:{DECADES[decade]}", type="track", limit=10)
-    for track in results["tracks"]["items"]:
-        track_uris.append(track["uri"])
+# Get the start and end years for each decade
+start_year1 = int(decades_dict[decade1])
+end_year1 = int(start_year1) + 9
+start_year2 = int(decades_dict[decade2])
+end_year2 = int(start_year2) + 9
 
-# Create the playlist
-playlist_name = st.text_input("Enter a name for the playlist:")
-description = st.text_input("Enter a description for the playlist:")
-if playlist_name:
-    playlist = spotify.user_playlist_create(user_dict['id'], name=playlist_name, public=False, description=description)
-    # Add the tracks to the playlist
-    spotify.playlist_add_items(playlist["id"], track_uris)
-    st.write(f"Playlist '{playlist_name}' created with {len(track_uris)} songs.")
-    playlist_link = playlist['external_urls']['spotify']
-    st.write(f"# Playlist Link:\n[{playlist_name}]({playlist_link})")
+# Filter the playlist data to get the top 20 songs from each decade
+playlist1 = playlist_data[(playlist_data['decade'] == decade1) & (playlist_data['year'] >= start_year1) & (playlist_data['year'] <= end_year1)].sample(20)
+playlist2 = playlist_data[(playlist_data['decade'] == decade2) & (playlist_data['year'] >= start_year2) & (playlist_data['year'] <= end_year2)].sample(20)
+
+# Combine the playlists and shuffle the songs
+playlist = pd.concat([playlist1, playlist2]).sample(frac=1)
+
+# Create the Spotify playlist
+playlist_name = f"{decade1} + {decade2} Playlist"
+playlist_description = f"Top 20 songs from {decade1} and {decade2}"
+playlist_tracks = playlist['uri'].tolist()
+
+user = sp.me()
+playlist = sp.user_playlist_create(user['id'], name=playlist_name, public=True, description=playlist_description)
+sp.playlist_add_items(playlist['id'], playlist_tracks)
+
+# Display the link to the playlist
+playlist_link = f"spotify:playlist:{playlist['id']}"
+st.markdown(f"## Your {decade1} + {decade2} Playlist")
+st.markdown(f"Check out your playlist [here]({playlist_link})!")
