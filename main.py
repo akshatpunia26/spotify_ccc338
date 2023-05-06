@@ -10,7 +10,7 @@ REDIRECT_URI = 'https://modern-love-spotify.streamlit.app/'
 client_credentials_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-playlist_data = pd.read_csv('playlist_data.csv')
+playlist_data = pd.read_csv('playlist_data.csv', names=['playlist_uri', 'artist', 'name', 'decade'])
 
 st.title('Decades Playlist Generator')
 st.markdown("""Select two decades from 1920 to 2010, and we'll generate a playlist of the top 20 songs from each decade!""")
