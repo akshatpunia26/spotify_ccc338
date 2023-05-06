@@ -56,17 +56,18 @@ spotify = spotipy.Spotify(auth=access_token)
 
 user_dict = spotify.current_user()
 
-playlist = spotify.user_playlist_create(user_dict['id'], name=playlist_name, public=False, description=description)
+if playlist_name and description and access_token:
+    playlist = spotify.user_playlist_create(user_dict['id'], name=playlist_name, public=False, description=description)
 
-track_uris = []
+    track_uris = []
 
-for decade in [decade1, decade2]:
-    st.write(f"Searching for {decade} songs...")
-    results = spotify.search(q=f"year:{DECADES[decade]}", type="track", limit=10)
-    for track in results["tracks"]["items"]:
-        track_uris.append(track["uri"])
+    for decade in [decade1, decade2]:
+        st.write(f"Searching for {decade} songs...")
+        results = spotify.search(q=f"year:{DECADES[decade]}", type="track", limit=10)
+        for track in results["tracks"]["items"]:
+            track_uris.append(track["uri"])
 
-spotify.playlist_add_items(playlist["id"], track_uris)
+    spotify.playlist_add_items(playlist["id"], track_uris)
 
-st.write(f"Playlist '{playlist_name}' created with {len(track_uris)} songs.")
-st.write(f"Click here to view the playlist on Spotify: {playlist['external_urls']['spotify']}")
+    st.write(f"Playlist '{playlist_name}' created with {len(track_uris)} songs.")
+    st.write(f"Click here to view the playlist on Spotify: {playlist['external_urls']['spotify']}")
