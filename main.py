@@ -44,5 +44,9 @@ if st.button('Generate Playlist'):
     playlist2 = playlist2.sample(n=min(10, len(playlist2)))
     playlist = pd.concat([playlist1, playlist2]).reset_index(drop=True)
     st.markdown(f"## Your {decade1} + {decade2} Playlist")
+    st.write("Here are your selected songs:")
     for index, row in playlist.iterrows():
-        st.write(f"[{row['name']} by {row['artist']}](row['playlist_uri'])")
+        st.write(f"### {index + 1}. {row['name']} by {row['artist']} ({row['decade']})")
+        st.image(row['image_url'])
+        st.write(f"Listen on [Spotify]({row['playlist_uri']})")
+        st.write('\n')  
