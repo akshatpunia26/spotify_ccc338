@@ -49,11 +49,6 @@ if not access_token:
 spotify = spotipy.Spotify(auth=access_token)
 user_dict = spotify.current_user()
 
-# Create the playlist
-playlist_name = st.text_input("Enter a name for the playlist:")
-description = st.text_input("Enter a description for the playlist:")
-playlist = spotify.user_playlist_create(user_dict['id'], name=playlist_name, public=False, description=description)
-
 # Get the two decades from the user
 decade1 = st.selectbox("Select the first decade:", options=list(DECADES.keys()))
 decade2 = st.selectbox("Select the second decade:", options=list(DECADES.keys()))
@@ -67,8 +62,14 @@ for decade in [decade1, decade2]:
     results = spotify.search(q=f"year:{DECADES[decade]}", type="track", limit=10)
     for track in results["tracks"]["items"]:
         track_uris.append(track["uri"])
-# Add the tracks to the playlist
-spotify.playlist_add_items(playlist["id"], track_uris)
-st.write(f"Playlist '{playlist_name}' created with {len(track_uris)} songs.")
-playlist_link = playlist['external_urls']['spotify']
-st.write(f"# Playlist Link:\n[{playlist_name}]({playlist_link})")
+
+# Create the playlist
+playlist_name = st.text_input("Enter a name for the playlist:")
+description = st.text_input("Enter a description for the playlist:")
+if playlist_name:
+    playlist = spotify.user_playlist_create(user_dict['id'], name=playlist_name, public=False, description=description)
+    # Add the tracks to the playlist
+    spotify.playlist_add_items(playlist["id"], track_uris)
+    st.write(f"Playlist '{playlist_name}' created with {len(track_uris)} songs.")
+    playlist_link = playlist['external_urls']['spotify']
+    st.write(f"# Playlist Link:\n[{playlist_name}]({playlist_link})")
