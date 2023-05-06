@@ -12,8 +12,8 @@ st.subheader("CCC338 - Creative Project - Akshat Punia(https://akshatpunia.com/)
 st.header("Introduction")
 st.write("I was always intrigued by how the idea of modern love has been displayed through pop art throughout the decades. By listening to these songs around the idea of love from various genres and time periods, we can gain a better understanding of this idea of modern love has evolved and continues to evolve.")
 
-image = Image.open('elvis.jpg')
-st.image(image, caption='Elvis Performing')
+image = 'elvis.jpg'
+st.image(image, caption='Elvis Presley Performing')
 
 st.header("The Evolution of Love in Pop Art")
 st.write("From the crooners of the 1930s to the rock ballads of the 1980s and beyond, love songs have always been a staple of pop culture. The lyrics and melodies have evolved with each decade, giving us a glimpse into the larger trends of the time.")    
