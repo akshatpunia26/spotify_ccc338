@@ -47,6 +47,6 @@ if st.button('Generate Playlist'):
     st.write("Here are your selected songs:")
     for index, row in playlist.iterrows():
         st.write(f"### {index + 1}. {row['name']} by {row['artist']} ({row['decade']})")
-        st.image(row['image_url'])
+        #st.image(row['image_url'])
         st.write(f"Listen on [Spotify]({row['playlist_uri']})")
         st.write('\n')  
