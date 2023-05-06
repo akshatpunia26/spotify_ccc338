@@ -61,4 +61,5 @@ if st.button('Generate Playlist'):
         with col1:
             st.image(row['image_url'], width=200)
         with col2:
-            st.write(f"**{row['name']}** by {row['artist']} ({row['decade']})\n{row['spotify_link']}")
+            st.markdown(f"## **{row['name']}** by {row['artist']} ({row['decade']})\n{row['spotify_link']}")
+
