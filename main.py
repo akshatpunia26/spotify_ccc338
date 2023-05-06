@@ -3,7 +3,6 @@ import streamlit as st
 import random
 import requests
 import base64
-from IPython.core.display import HTML
 st.set_page_config(layout='wide', page_title='Modern Love: In Writing', page_icon=':heart:')
 
 # Load playlist data
