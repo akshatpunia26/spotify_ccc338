@@ -4,10 +4,10 @@ import random
 import requests
 import base64
 from PIL import Image
-st.set_page_config(layout='wide', page_title='Modern Love: In Writing', page_icon=':heart:')
+st.set_page_config(layout='wide', page_title='CCC338 - Creative Project', page_icon=':heart:')
 
 st.title("Modern Love: Writing and Deconstructing the Idea")
-st.subheader("CCC338 - Creative Project - Akshat Punia(https://akshatpunia.com/)")
+st.subheader("CCC338 - Creative Project - [Akshat Punia](https://akshatpunia.com/)")
 
 st.header("Introduction")
 st.write("I was always intrigued by how the idea of modern love has been displayed through pop art throughout the decades. By listening to these songs around the idea of love from various genres and time periods, we can gain a better understanding of this idea of modern love has evolved and continues to evolve.")
