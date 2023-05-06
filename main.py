@@ -70,3 +70,5 @@ for decade in [decade1, decade2]:
 # Add the tracks to the playlist
 spotify.playlist_add_items(playlist["id"], track_uris)
 st.write(f"Playlist '{playlist_name}' created with {len(track_uris)} songs.")
+playlist_link = playlist['external_urls']['spotify']
+st.write(f"# Playlist Link:\n[{playlist_name}]({playlist_link})")
