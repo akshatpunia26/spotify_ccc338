@@ -3,6 +3,7 @@ import streamlit as st
 import random
 import requests
 import base64
+from IPython.core.display import HTML
 st.set_page_config(layout='wide', page_title='Modern Love: In Writing', page_icon=':heart:')
 
 # Load playlist data
@@ -60,12 +61,9 @@ if st.button('Generate Playlist'):
     playlist2 = playlist_data[(playlist_data['decade'] == decade2)]
     playlist2 = playlist2.sample(n=min(10, len(playlist2)))
     playlist = pd.concat([playlist1, playlist2]).reset_index(drop=True)
-
-    # Display playlist in a table
-    st.markdown(f"## Your {decade1} + {decade2} Playlist")
-    st.table(playlist[['name', 'artist', 'decade']])
-    for index, row in playlist.iterrows():
-        # Get album art image from Spotify API
+    
+    # Get album art image from Spotify API
+    def get_image_url(row):
         search_url = 'https://api.spotify.com/v1/search'
         query = f"{row['name']} {row['artist']}"
         response = requests.get(search_url, 
@@ -75,8 +73,14 @@ if st.button('Generate Playlist'):
         track_url = f'https://api.spotify.com/v1/tracks/{track_id}'
         response = requests.get(track_url, headers={'Authorization': f'Bearer {access_token}'})
         image_url = response.json()['album']['images'][0]['url']
-        
+        return image_url
+
+    # Display playlist in a table
+    st.markdown(f"## Your {decade1} + {decade2} Playlist")
+    st.table(playlist[['name', 'artist', 'decade']])
+    playlist['image_url'] = playlist.apply(get_image_url, axis=1)
+    for index, row in playlist.iterrows():
         # Display song info and album art
         st.write(f"**{row['name']}** by {row['artist']} ({row['decade']}s)")
-        st.image(image_url, width=200)
+        st.image(row['image_url'], width=200)
         st.write(f"Listen on [Spotify]({row['playlist_uri']})\n")
