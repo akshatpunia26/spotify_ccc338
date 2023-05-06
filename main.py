@@ -55,4 +55,8 @@ if st.button('Generate Playlist'):
     st.markdown(f"## Your {decade1} + {decade2} Playlist")
     playlist['image_url'] = playlist.apply(get_image_url, axis=1)
     playlist['spotify_link'] = playlist.apply(lambda x: f"[Spotify]({x['playlist_uri']})", axis=1)
-    st.table(playlist[['name', 'artist', 'decade', 'image_url', 'spotify_link']])
+    for i, row in playlist.iterrows():
+        st.write(f"{i+1}.")
+        st.image(row['image_url'], width=100)
+        st.write(f"{row['name']} by {row['artist']} ({row['decade']}s)")
+        st.write(row['spotify_link'])
