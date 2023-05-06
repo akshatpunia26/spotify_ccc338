@@ -36,20 +36,15 @@ start_year2 = int(decades_dict[decade2])
 end_year2 = int(start_year2) + 9
 
 if st.button('Generate Playlist'):
-    playlist1 = playlist_data[(playlist_data['decade'] == start_year1) | (playlist_data['decade'] == end_year1)].sample(20)
-    playlist2 = playlist_data[(playlist_data['decade'] == start_year2) | (playlist_data['decade'] == end_year2)].sample(20)
+    playlist1 = playlist_data[(playlist_data['decade'] == decade1) & (playlist_data['decade'] >= decades_dict[decade1]) & (playlist_data['decade'] <= end_year1)].sample(20)
+    playlist2 = playlist_data[(playlist_data['decade'] == decade2) & (playlist_data['decade'] >= start_year2) & (playlist_data['decade'] <= end_year2)].sample(20)
     playlist = pd.concat([playlist1, playlist2]).sample(frac=1)
     playlist_name = f"{decade1} + {decade2} Playlist"
     playlist_description = f"Top 20 songs from {decade1} and {decade2}"
     playlist_tracks = playlist['playlist_uri'].tolist()
-    
-    try:
-        user = sp.current_user()
-        new_playlist = sp.user_playlist_create(user['id'], name=playlist_name, public=True, description=playlist_description)
-        sp.playlist_add_items(new_playlist['id'], playlist_tracks)
-        playlist_link = f"spotify:playlist:{new_playlist['id']}"
-        st.markdown(f"## Your {decade1} + {decade2} Playlist")
-        st.markdown(f"Check out your playlist [here]({playlist_link})!")
-    except Exception as e:
-        st.warning('An error occurred while creating the playlist. Please try again later.')
-        st.write(e)
+    user = sp.me()
+    new_playlist = sp.user_playlist_create(user['id'], name=playlist_name, public=True, description=playlist_description)
+    sp.playlist_add_items(new_playlist['id'], playlist_tracks)
+    playlist_link = f"spotify:playlist:{new_playlist['id']}"
+    st.markdown(f"## Your {decade1} + {decade2} Playlist")
+    st.markdown(f"Check out your playlist [here]({playlist_link})!")
