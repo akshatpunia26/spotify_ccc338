@@ -1,10 +1,11 @@
 import pandas as pd
 import streamlit as st
+import random
 
 playlist_data = pd.read_csv('playlist_data.csv')
 
 st.title('Decades Playlist Generator')
-st.markdown("""Select two decades from 1920 to 2010, and we'll generate a playlist of all songs from each decade!""")
+st.markdown("""Select two decades from 1920 to 2010, and we'll generate a playlist of 10 random songs from each decade!""")
 
 decades_dict = {'1920s': 1920,
                 '1930s': 1930,
@@ -22,12 +23,11 @@ decade1 = st.selectbox('Select the first decade:', decades)
 decade2 = st.selectbox('Select the second decade:', decades)
 
 if st.button('Generate Playlist'):
-    playlist1 = playlist_data[playlist_data['decade'] == decade1]
-    playlist2 = playlist_data[playlist_data['decade'] == decade2]
+    playlist1 = playlist_data[(playlist_data['decade'] == decade1)]
+    playlist1 = playlist1.sample(n=min(10, len(playlist1)))
+    playlist2 = playlist_data[(playlist_data['decade'] == decade2)]
+    playlist2 = playlist2.sample(n=min(10, len(playlist2)))
+    playlist = pd.concat([playlist1, playlist2]).reset_index(drop=True)
     st.markdown(f"## Your {decade1} + {decade2} Playlist")
-    st.write(f"### {decade1}")
-    for index, row in playlist1.iterrows():
-        st.write(f"[{row['name']} - {row['artist']}]({row['playlist_uri']})")
-    st.write(f"### {decade2}")
-    for index, row in playlist2.iterrows():
-        st.write(f"[{row['name']} - {row['artist']}]({row['playlist_uri']})")
+    for index, row in playlist.iterrows():
+        st.write(f"[{row['name']} by {row['artist']}](row['playlist_uri'])")
