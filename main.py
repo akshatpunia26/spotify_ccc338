@@ -3,12 +3,15 @@ import streamlit as st
 import random
 import requests
 import base64
+st.set_page_config(layout='wide', page_title='Modern Love: In Writing', page_icon=':heart:')
 
 # Load playlist data
 playlist_data = pd.read_csv('playlist_data.csv')
 
-# Set page title
-st.set_page_config(page_title='Modern Love: In Writing', page_icon=':heart:')
+
+# Add heading and text
+st.markdown('## Love and Pop Culture Through the Decades')
+st.write('Love has been a central theme in pop culture for decades. From the romantic ballads of the 1920s to the heartbreak anthems of the 2020s, music has reflected and influenced the way we think about love and relationships. In this playlist generator, we explore how love has evolved over time through the lens of popular music.')
 
 # Spotify API credentials
 client_id = 'dc8611201d2a4d68ac59e3623d309096'
@@ -50,13 +53,17 @@ end_year1 = start_year1 + 10
 start_year2 = decades_dict[decade2]
 end_year2 = start_year2 + 10
 
+# Generate playlist
 if st.button('Generate Playlist'):
     playlist1 = playlist_data[(playlist_data['decade'] == decade1)]
     playlist1 = playlist1.sample(n=min(10, len(playlist1)))
     playlist2 = playlist_data[(playlist_data['decade'] == decade2)]
     playlist2 = playlist2.sample(n=min(10, len(playlist2)))
     playlist = pd.concat([playlist1, playlist2]).reset_index(drop=True)
+
+    # Display playlist in a table
     st.markdown(f"## Your {decade1} + {decade2} Playlist")
+    st.table(playlist[['name', 'artist', 'decade']])
     for index, row in playlist.iterrows():
         # Get album art image from Spotify API
         search_url = 'https://api.spotify.com/v1/search'
