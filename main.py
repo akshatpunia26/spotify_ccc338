@@ -47,22 +47,25 @@ start_year2 = int(decades_dict[decade2])
 end_year2 = int(start_year2) + 9
 
 # Filter the playlist data to get the top 20 songs from each decade
-playlist1 = playlist_data[(playlist_data['decade'] == decade1) & (playlist_data['year'] >= start_year1) & (playlist_data['year'] <= end_year1)].sample(20)
-playlist2 = playlist_data[(playlist_data['decade'] == decade2) & (playlist_data['year'] >= start_year2) & (playlist_data['year'] <= end_year2)].sample(20)
+try:
+    playlist1 = playlist_data[(playlist_data['decade'] == decade1) & (playlist_data['year'] >= start_year1) & (playlist_data['year'] <= end_year1)].sample(20)
+    playlist2 = playlist_data[(playlist_data['decade'] == decade2) & (playlist_data['year'] >= start_year2) & (playlist_data['year'] <= end_year2)].sample(20)
 
-# Combine the playlists and shuffle the songs
-playlist = pd.concat([playlist1, playlist2]).sample(frac=1)
+    # Combine the playlists and shuffle the songs
+    playlist = pd.concat([playlist1, playlist2]).sample(frac=1)
 
-# Create the Spotify playlist
-playlist_name = f"{decade1} + {decade2} Playlist"
-playlist_description = f"Top 20 songs from {decade1} and {decade2}"
-playlist_tracks = playlist['uri'].tolist()
+    # Create the Spotify playlist
+    playlist_name = f"{decade1} + {decade2} Playlist"
+    playlist_description = f"Top 20 songs from {decade1} and {decade2}"
+    playlist_tracks = playlist['uri'].tolist()
 
-user = sp.me()
-playlist = sp.user_playlist_create(user['id'], name=playlist_name, public=True, description=playlist_description)
-sp.playlist_add_items(playlist['id'], playlist_tracks)
+    user = sp.me()
+    playlist = sp.user_playlist_create(user['id'], name=playlist_name, public=True, description=playlist_description)
+    sp.playlist_add_items(playlist['id'], playlist_tracks)
 
-# Display the link to the playlist
-playlist_link = f"spotify:playlist:{playlist['id']}"
-st.markdown(f"## Your {decade1} + {decade2} Playlist")
-st.markdown(f"Check out your playlist [here]({playlist_link})!")
+    # Display the link to the playlist
+    playlist_link = f"spotify:playlist:{playlist['id']}"
+    st.markdown(f"## Your {decade1} + {decade2} Playlist")
+    st.markdown(f"Check out your playlist [here]({playlist_link})!")
+except KeyError:
+    st.error("Unable to generate playlist. Please try again.")
