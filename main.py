@@ -56,7 +56,9 @@ if st.button('Generate Playlist'):
     playlist['image_url'] = playlist.apply(get_image_url, axis=1)
     playlist['spotify_link'] = playlist.apply(lambda x: f"[Spotify]({x['playlist_uri']})", axis=1)
     for i, row in playlist.iterrows():
-        st.write(f"{i+1}.")
-        st.image(row['image_url'], width=100)
-        st.write(f"{row['name']} by {row['artist']} ({row['decade']}s)")
-        st.write(row['spotify_link'])
+    st.write(f"{i+1}.")
+        col1, col2 = st.beta_columns(2)
+        with col1:
+            st.image(row['image_url'], width=200)
+        with col2:
+            st.write(f"**{row['name']}** by {row['artist']} ({row['decade']})\n{row['spotify_link']}")
