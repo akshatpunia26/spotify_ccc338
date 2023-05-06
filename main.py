@@ -68,7 +68,8 @@ if st.button('Generate Playlist'):
         response = requests.get(track_url, headers={'Authorization': f'Bearer {access_token}'})
         image_url = response.json()['album']['images'][0]['url']
         return image_url
-    st.markdown(f"## Your {decade1} + {decade2} Mixtape (linked to playlists, instead of individual songs, due to Spotify API limitations))")
+    st.markdown(f"## Your {decade1} + {decade2} Mixtape")
+    st.subheader('(linked to playlists, instead of individual songs, due to Spotify API limitations')
     playlist['image_url'] = playlist.apply(get_image_url, axis=1)
     playlist['spotify_link'] = playlist.apply(lambda x: f"[Spotify]({x['playlist_uri']})", axis=1)
     for i, row in playlist.iterrows():
